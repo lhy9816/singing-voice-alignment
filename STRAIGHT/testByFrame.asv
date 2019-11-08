@@ -1,0 +1,95 @@
+function [] = test(target, type, fraction)
+[x,fs] = audioread(['song' target '_fragment/song' target '_' type '_' fraction '.wav']);
+% downsample to 6000
+x = resample(x,6144,fs);                              % 降采样之后的声源信号
+%% enframe
+winL = 512;
+hop=floor(winL/10);
+p=16;
+xs=enframe(x,winL,hop,'z',fs);
+frameNum=size(xs,1);
+for i=1:frameNum
+    x=xs(i,:);
+    %% LP spectra
+    % downsample to 6000
+    x = resample(x,6144,fs);                              % 降采样之后的声源信号
+    fs=6144;
+    winL=512;
+    hop=floor(winL/10);
+    p=16;
+    [ Y1,ars ] = lp_spectra( x,fs,winL-p,hop,p );
+    % draw spectrogram
+    frameL=size(Y1,1);
+    frameTime=frame2time(frameL,winL,hop,fs);
+    n2=1:winL;
+    freq=(n2-1)*fs/(2*winL);
+    Y=Y1';
+    lpccs=lpc2lpccm(ars,p,p);
+    % %=====================================================%
+    % figure
+    % % set(gcf,'Position',[20 100 600 500]);            
+    % % axes('Position',[0.1 0.1 0.85 0.5]);  
+    % save_pic=imagesc(frameTime,freq,abs(Y(n2,:))); % 画出Y的图像  
+    % axis xy; ylabel('频率/Hz');xlabel('时间/s');
+    % title(['语谱图 ' 'song' target ' fragment/song' target ' ' type ' ' fraction '.wav']);
+    % m = 32; LightYellow = [0.0 0.0 0.0];
+    % MidRed = [0.5 0.5 0.5]; Black = [1 1 1];
+    % Colors = [Black; MidRed; LightYellow];
+    % colormap(SpecColorMap(m,Colors)); 
+    % %=====================================================%
+    % %% VAD
+    % winT = 0.1;
+    % refinelength = length(x);
+    % winL = floor(winT * refinelength);
+    % x1 = x(1:refinelength)';    % get transpose of x !
+    % winL = round2pow(winL);
+    % 
+    % x_seg= enframe(x, winL, floor(0.5*winL));
+    % num = size(x_seg, 1);
+    % for i=1:num
+    %   x_seg = [x_seg; x1((i-1)*winL+1:i*winL)];
+    %   vad = VAD(x_seg(i,:), fs, 0.01);
+    %   plot(vad);
+    % end
+    % %=====================================================%
+    % % draw VAD picture
+    % subplot(2,1,1)
+    % plot(x);
+    % x1 = VAD(x(13000:17000),fs,0.01);
+    % subplot(2,1,2)
+    % plot(x1);
+    % %=====================================================%
+    %% straight
+    x = resample(x,6144,fs);                              % 降采样之后的声源信号
+    fs=6144;
+    winL=512;
+    cd STRAIGHT\;
+    % extract f0
+    [f0raw,ap]=exstraightsource(x,fs);
+    [sp,spPara] = exstraightspec(x,f0raw,fs);
+    sp=10*log10(sp/1e-3);
+    % go and extract cc
+    %strcc=extractCepsCoef(sp, 16);
+    time = size(sp,2);
+    freq=size(sp,1);
+    %=====================================================%
+    figure
+    imagesc((1:time),(1:freq),abs(sp((1:freq),:))); % 画出Y的图像  
+    axis xy; ylabel('频率/Hz');xlabel('时间/s');
+    title('语谱图 ');
+    m = 256; LightYellow = [0.0 0.0 0.0];
+    MidRed = [0.5 0.5 0.5]; Black = [1 1 1];
+    Colors = [Black; MidRed; LightYellow];
+    colormap(SpecColorMap(m,Colors)); 
+    % 过一个dct余弦变换得到 cepstral coefficient
+    cd ..
+    %% mfcc
+    p=24;
+    winL=512;
+    inc = floor(winL/10);
+    dctN = 24;
+    ccc=mfcc_m(x,fs,p,dctN,winL,inc);
+    % 取前12维原始mel谱
+    mel_candidate = ccc(:,1:12);
+end
+end
