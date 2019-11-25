@@ -18,6 +18,29 @@ y_ref_n = y_ref_t * fs;
 score=compute_corr([Y_usr user_dtw],[Y_ref ref_dtw],match_route);
 y_tar_t = frame2time(size(match_route,1),256,256/4,6144);
 y_tar_n = y_tar_t * fs;
+
+% visualize the alignment
+% figure;
+% normalized_x_usr = x_usr/max(abs(x_usr));
+% normalized_x_ref = x_ref/max(abs(x_ref))+1.5;
+% t_usr = frame2time(match_route(size(match_route,1),1),256,256/4,6144); 
+% t_ref = frame2time(match_route(size(match_route,1),2),256,256/4,6144); 
+% real_t_usr = linspace(t_usr(1),t_usr(size(t_usr,2)), size(x_usr,1));
+% real_t_ref = linspace(t_ref(1),t_ref(size(t_ref,2)), size(x_ref,1));
+% selected_points = linspace(1,size(match_route,1),250);
+% selected_usr_points = y_usr_n(match_route(ceil(selected_points),1));
+% selected_ref_points = y_ref_n(match_route(ceil(selected_points),2));
+% plot(real_t_usr,normalized_x_usr,'b','linewidth',1);
+% hold on;
+% set(gca,'XLim',[0 max(real_t_usr(length(real_t_usr)),real_t_ref(length(real_t_ref)))]);% set show range
+% plot(real_t_ref,normalized_x_ref,'b','linewidth',1);
+% hold on;
+% for i=1:length(selected_usr_points)
+%     %line([real_t_ref(selected_ref_points(i)), real_t_usr(selected_usr_points(i))],[1.5,0],'Color','r');
+%     line([real_t_ref(selected_ref_points(i)), real_t_usr(selected_usr_points(i))],[normalized_x_ref(selected_ref_points(i)), normalized_x_usr(selected_usr_points(i))],'Color','r');
+% end
+% close;
+
 % 将短的那一段拉伸为与长的那一段一样长
 tar_usr = strechAudioLpc(x_usr, y_tar_n, match_route(:,1));
 tar_ref = strechAudioLpc(x_ref, y_tar_n, match_route(:,2));

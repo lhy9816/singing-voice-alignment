@@ -1,6 +1,8 @@
 % 按照循环模式对所有待对齐歌曲进行对齐，对不同的configs参数以及选取参数的贡献比值ratio进行grid search
 % 找到最合适的参数搭配，并生成对齐后的user段和reference段，分别输出与左声道和右声道
 clear
+% add current folder and subfolders to working space
+addpath(genpath(pwd));
 % data 表示所有存储的contextFile的位置
 data = {'song1_user1_workspace.mat', 'song1_user2_workspace.mat', 'song2_user1_workspace.mat', 'song2_user2_workspace.mat', 'song3_user1_workspace.mat', 'song3_user2_workspace.mat',};
 % data = {'song1_user1_workspace.mat'};
