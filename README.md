@@ -6,7 +6,7 @@
 
 This project is mainly based on the method of speech signal processing to match and align the tracks sung by amateurs and professional singers with a two-stage method:
 
-- First, according to Harvest Algorithm provided by WORLD, we extract the F0 pitch of the tracks sung by amateurs and professional singers, and divide the VUV on the basis of F0. When the F0 curve disconnects for over a certain length of time, it is considered as breath gap, thus divided into two sections. Finally we get several blocks that is generally based on lines of lyric.
+- First, according to Harvest Algorithm provided by WORLD, we extract the F0 pitch of the tracks sung by amateurs and professional singers and divide the VUV on the basis of F0. When the F0 curve disconnects for over a certain length of time, it is considered as a breath gap, thus divided into two sections. Finally, we get several blocks that are generally based on lines of lyric.
 - Each segment of the track of amateurs and professional singers matches with each other according to the correlation between the length of time and the sound parameters. 
 - Second level matching and aligning is performed within the matched first level amateur singers' blocks and professional singer's blocks. The time precision of the second level matching is around 25 ms, which is the same as the window length when performing STFT. The deDTW algorithm is used when performing the aligning task. The final result is derived by stretching and average-padding which adjust the length of the aligned tracks and broadcasting separately in both the left-ear channel and right-year channel respectively.
 
@@ -30,7 +30,7 @@ This project is mainly based on the method of speech signal processing to match 
 - createF0.m
   - calculate userFile's and refFile's F0 curve
 - segby0.m
-  - segement F0 curves according to their unvoiced length to get first level match results
+  - segment F0 curves according to their unvoiced length to get first level match results
 - segmentAlign.m
   - the first level match
 - noteAlign.m
